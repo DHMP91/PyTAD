@@ -1,0 +1,152 @@
+openapi: 3.0.3
+info:
+  title: TestReportBoard API
+  version: 1.0.0
+  description: API for test reporting
+paths:
+  /testcases/api/list:
+    get:
+      operationId: testcases_api_list_retrieve
+      description: List all test_cases
+      tags:
+      - testcases
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestCase'
+          description: ''
+  /testcases/api/testcase/{id}:
+    get:
+      operationId: testcases_api_testcase_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - testcases
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestCase'
+          description: ''
+    post:
+      operationId: testcases_api_testcase_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - testcases
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestCase'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TestCase'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TestCase'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestCase'
+          description: ''
+    put:
+      operationId: testcases_api_testcase_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - testcases
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestCase'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TestCase'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TestCase'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestCase'
+          description: ''
+    delete:
+      operationId: testcases_api_testcase_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - testcases
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: No response body
+components:
+  schemas:
+    TestCase:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 30
+        relative_path:
+          type: string
+          maxLength: 300
+        create_date:
+          type: string
+          format: date-time
+      required:
+      - id
+      - name
+      - relative_path
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
