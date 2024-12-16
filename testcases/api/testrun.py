@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from testcases.models import TestRun
-from testcases.serializers import TestRunSerializer
+from testcases.api.serializers import TestRunSerializer
 
 
 

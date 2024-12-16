@@ -1,13 +1,14 @@
-from drf_spectacular.utils import extend_schema
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
 from rest_framework import status, permissions
 from testcases.models import TestCase
-from testcases.serializers import TestCaseSerializer
+from testcases.api.serializers import TestCaseSerializer
 
 
 class TestCasesAPI(APIView):
+    authentication_classes = [TokenAuthentication]
     serializer_class = TestCaseSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -20,6 +21,7 @@ class TestCasesAPI(APIView):
         return Response(serializer.data)
 
 class NewTestCaseAPI(APIView):
+    authentication_classes = [TokenAuthentication]
     serializer_class = TestCaseSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -33,6 +35,7 @@ class NewTestCaseAPI(APIView):
 
 
 class TestCaseAPI(APIView):
+    authentication_classes = [TokenAuthentication]
     serializer_class = TestCaseSerializer
     permission_classes = [permissions.IsAuthenticated]
 
