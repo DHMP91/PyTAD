@@ -9,7 +9,7 @@ from testcases.serializers import TestCaseSerializer
 
 class TestCasesAPI(APIView):
     serializer_class = TestCaseSerializer
-    permission_classes = [permissions.AllowAny] #TODO only authed user
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
         """
@@ -21,7 +21,7 @@ class TestCasesAPI(APIView):
 
 class NewTestCaseAPI(APIView):
     serializer_class = TestCaseSerializer
-    permission_classes = [permissions.AllowAny] #TODO only authed user
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
         data = JSONParser().parse(request)
@@ -34,7 +34,7 @@ class NewTestCaseAPI(APIView):
 
 class TestCaseAPI(APIView):
     serializer_class = TestCaseSerializer
-    permission_classes = [permissions.AllowAny] #TODO only authed user
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, pk):
         test_case = self.__get_test_case(pk)
@@ -43,7 +43,6 @@ class TestCaseAPI(APIView):
 
         serializer = TestCaseSerializer(test_case)
         return Response(serializer.data)
-
 
 
     def put(self, request, pk):

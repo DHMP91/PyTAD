@@ -18,3 +18,25 @@ Planned features is:
 - Stale tests detection
 - Flaky tests detection
 - Single reporting source for parallel pytest run or multiple pytest runs.
+
+
+
+# Create API User and Token
+```text
+python .\manage.py createsuperuser # Create superuser for api
+python .\manage.py migrate authtoken  # Need to be done only once per db creation
+python .\manage.py drf_create_token <username> # Create token for user
+```
+
+# Cheat sheet
+```
+# DB migration update and migrate
+python .\manage.py makemigrations
+python .\manage.py migrate
+
+# Server start
+python .\manage.py runserver
+
+# Build schema (drf spectacuar lib)
+python .\manage.py spectacular --color --file schema.yml
+```

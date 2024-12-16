@@ -10,7 +10,7 @@ from testcases.serializers import TestRunSerializer
 
 class TestRunsAPI(APIView):
     serializer_class = TestRunSerializer
-    permission_classes = [permissions.AllowAny] #TODO only authed user
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, test_id):
         """
@@ -23,7 +23,7 @@ class TestRunsAPI(APIView):
 
 class NewTestRunAPI(APIView):
     serializer_class = TestRunSerializer
-    permission_classes = [permissions.AllowAny] #TODO only authed user
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, test_id):
         data = JSONParser().parse(request)
@@ -36,7 +36,7 @@ class NewTestRunAPI(APIView):
 
 class TestRunAPI(APIView):
     serializer_class = TestRunSerializer
-    permission_classes = [permissions.AllowAny] #TODO only authed user
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, pk):
         test_run = self.__get_test_run(pk)
