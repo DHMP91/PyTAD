@@ -5,9 +5,9 @@ from django.utils import timezone
 
 
 class TestCase(models.Model):
-    name = models.CharField(max_length=30, blank=False)
-    relative_path = models.CharField(max_length=300, blank=False)
-    create_date = models.DateTimeField(blank=False, default=datetime.datetime.now())
+    name = models.CharField(max_length=100, blank=False)
+    relative_path = models.CharField(max_length=300, blank=False, unique=True)
+    create_date = models.DateTimeField(blank=False, auto_now_add=True)
 
 
 class TestRun(models.Model):
@@ -26,7 +26,8 @@ class TestRun(models.Model):
         API = "API"
         UI = "UI"
 
-    suite_id = models.CharField(max_length=30) # Test suite id
+    name = models.CharField(max_length=100)  # Test suite id
+    suite_id = models.CharField(max_length=30, blank=True) # Test suite id
     test_id = models.ForeignKey(TestCase, models.CASCADE, related_name="test_runs", null=True) # Test Case ID. If null, untracked test
     status = models.CharField(
         max_length=30,

@@ -1,33 +1,42 @@
-from rest_framework import status, permissions
+from drf_spectacular.utils import extend_schema
+from rest_framework import status, permissions, generics
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from testcases.models import TestRun
-from testcases.api.serializers import TestRunSerializer
+from testcases.api.serializers import TestRunSerializer, NewTestRunSerializer
 
 
-
-class TestRunsAPI(APIView):
+class TestRunsAPI(generics.ListAPIView):
     serializer_class = TestRunSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request, test_id):
-        """
-        List all test runs for test case
-        """
-        runs = TestRun.objects.filter(test_id = test_id)
-        serializer = TestRunSerializer(runs, many=True)
+    def list(self, request, *args, **kwargs):
+        qs = TestRun.objects.filter(test_id = kwargs["pk"])
+        page = self.paginate_queryset(qs)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(qs, many=True)
         return Response(serializer.data)
 
 
 class NewTestRunAPI(APIView):
-    serializer_class = TestRunSerializer
+    serializer_class = NewTestRunSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, test_id):
-        data = JSONParser().parse(request)
-        serializer = TestRunSerializer(data=data)
+    @extend_schema(
+        request=NewTestRunSerializer,
+        responses={
+            201:TestRunSerializer
+        }
+    )
+    def post(self, request, pk):
+        request.data['test_id'] = pk
+        serializer = TestRunSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)

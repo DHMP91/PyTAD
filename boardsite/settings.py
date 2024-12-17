@@ -140,11 +140,16 @@ REST_FRAMEWORK = {
         # 'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ),
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+    ],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'TestReportBoard API',
+    'TITLE': 'PYTAD API',
     'DESCRIPTION': 'API for test reporting',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,

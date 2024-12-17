@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: TestReportBoard API
+  title: PYTAD API
   version: 1.0.0
   description: API for test reporting
 paths:
@@ -10,26 +10,30 @@ paths:
       tags:
       - health
       security:
-      - cookieAuth: []
       - tokenAuth: []
       responses:
         '200':
           description: No response body
   /testcases/api/list:
     get:
-      operationId: testcases_api_list_retrieve
-      description: List all test_cases
+      operationId: testcases_api_list_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
       tags:
       - testcases
       security:
-      - cookieAuth: []
       - tokenAuth: []
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TestCase'
+                $ref: '#/components/schemas/PaginatedTestCaseList'
           description: ''
   /testcases/api/testcase:
     post:
@@ -41,18 +45,11 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/TestCase'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/TestCase'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/TestCase'
         required: true
       security:
-      - cookieAuth: []
       - tokenAuth: []
       responses:
-        '200':
+        '201':
           content:
             application/json:
               schema:
@@ -70,7 +67,6 @@ paths:
       tags:
       - testcases
       security:
-      - cookieAuth: []
       - tokenAuth: []
       responses:
         '200':
@@ -94,15 +90,8 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/TestCase'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/TestCase'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/TestCase'
         required: true
       security:
-      - cookieAuth: []
       - tokenAuth: []
       responses:
         '200':
@@ -122,39 +111,16 @@ paths:
       tags:
       - testcases
       security:
-      - cookieAuth: []
       - tokenAuth: []
       responses:
         '204':
           description: No response body
-  /testcases/api/testcase/{test_id}/list:
-    get:
-      operationId: testcases_api_testcase_list_retrieve
-      description: List all test runs for test case
-      parameters:
-      - in: path
-        name: test_id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - testcases
-      security:
-      - cookieAuth: []
-      - tokenAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TestRun'
-          description: ''
-  /testcases/api/testcase/{test_id}/testrun:
+  /testcases/api/testcase/{id}/testrun:
     post:
       operationId: testcases_api_testcase_testrun_create
       parameters:
       - in: path
-        name: test_id
+        name: id
         schema:
           type: integer
         required: true
@@ -164,37 +130,75 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TestRun'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/TestRun'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/TestRun'
+              $ref: '#/components/schemas/NewTestRun'
         required: true
       security:
-      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestRun'
+          description: ''
+  /testcases/api/testcase/{id}/testruns:
+    get:
+      operationId: testcases_api_testcase_testruns_list
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - testcases
+      security:
       - tokenAuth: []
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TestRun'
+                $ref: '#/components/schemas/PaginatedTestRunList'
           description: ''
-  /testcases/api/testcase/testrun/{test_id}:
+  /testcases/api/testcase/search:
+    post:
+      operationId: testcases_api_testcase_search_create
+      tags:
+      - testcases
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchTestCase'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestCase'
+          description: ''
+  /testcases/api/testrun/{id}:
     get:
-      operationId: testcases_api_testcase_testrun_retrieve
+      operationId: testcases_api_testrun_retrieve
       parameters:
       - in: path
-        name: test_id
+        name: id
         schema:
           type: integer
         required: true
       tags:
       - testcases
       security:
-      - cookieAuth: []
       - tokenAuth: []
       responses:
         '200':
@@ -204,10 +208,10 @@ paths:
                 $ref: '#/components/schemas/TestRun'
           description: ''
     put:
-      operationId: testcases_api_testcase_testrun_update
+      operationId: testcases_api_testrun_update
       parameters:
       - in: path
-        name: test_id
+        name: id
         schema:
           type: integer
         required: true
@@ -218,15 +222,8 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/TestRun'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/TestRun'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/TestRun'
         required: true
       security:
-      - cookieAuth: []
       - tokenAuth: []
       responses:
         '200':
@@ -236,23 +233,108 @@ paths:
                 $ref: '#/components/schemas/TestRun'
           description: ''
     delete:
-      operationId: testcases_api_testcase_testrun_destroy
+      operationId: testcases_api_testrun_destroy
       parameters:
       - in: path
-        name: test_id
+        name: id
         schema:
           type: integer
         required: true
       tags:
       - testcases
       security:
-      - cookieAuth: []
       - tokenAuth: []
       responses:
         '204':
           description: No response body
 components:
   schemas:
+    NewTestRun:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 100
+        suite_id:
+          type: string
+          maxLength: 30
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        start_time:
+          type: string
+          format: date-time
+        end_time:
+          type: string
+          format: date-time
+          nullable: true
+        marks:
+          type: string
+          maxLength: 30
+        product_version:
+          type: string
+          maxLength: 30
+        environment:
+          type: string
+          maxLength: 200
+        defects:
+          type: string
+          maxLength: 100
+      required:
+      - name
+    PaginatedTestCaseList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestCase'
+    PaginatedTestRunList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestRun'
+    SearchTestCase:
+      type: object
+      properties:
+        relative_path:
+          type: string
+          maxLength: 300
+      required:
+      - relative_path
     StatusEnum:
       enum:
       - PASS
@@ -281,14 +363,16 @@ components:
           readOnly: true
         name:
           type: string
-          maxLength: 30
+          maxLength: 100
         relative_path:
           type: string
           maxLength: 300
         create_date:
           type: string
           format: date-time
+          readOnly: true
       required:
+      - create_date
       - id
       - name
       - relative_path
@@ -298,6 +382,9 @@ components:
         id:
           type: integer
           readOnly: true
+        name:
+          type: string
+          maxLength: 100
         suite_id:
           type: string
           maxLength: 30
@@ -327,12 +414,8 @@ components:
           maxLength: 100
       required:
       - id
-      - suite_id
+      - name
   securitySchemes:
-    cookieAuth:
-      type: apiKey
-      in: cookie
-      name: sessionid
     tokenAuth:
       type: apiKey
       in: header
