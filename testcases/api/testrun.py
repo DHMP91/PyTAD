@@ -1,6 +1,5 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework import status, permissions, generics
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -51,7 +50,7 @@ class TestRunAPI(APIView):
         test_run = self.__get_test_run(pk)
         if not test_run:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = TestRunSerializer(test_run, many=True)
+        serializer = TestRunSerializer(test_run)
         return Response(serializer.data)
 
 

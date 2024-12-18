@@ -337,22 +337,22 @@ components:
       - relative_path
     StatusEnum:
       enum:
-      - PASS
-      - FAIL
+      - PASSED
+      - FAILED
       - ERROR
       - UNKNOWN
-      - XFAIL
-      - XPASS
+      - XFAILED
+      - XPASSED
       - SKIPPED
       - INPROGRESS
       type: string
       description: |-
-        * `PASS` - Pass
-        * `FAIL` - Fail
+        * `PASSED` - Pass
+        * `FAILED` - Fail
         * `ERROR` - Error
         * `UNKNOWN` - Unknown
-        * `XFAIL` - Xfail
-        * `XPASS` - Xpass
+        * `XFAILED` - Xfail
+        * `XPASSED` - Xpass
         * `SKIPPED` - Skipped
         * `INPROGRESS` - Inprogress
     TestCase:

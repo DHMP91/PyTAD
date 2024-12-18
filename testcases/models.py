@@ -12,12 +12,12 @@ class TestCase(models.Model):
 
 class TestRun(models.Model):
     class Result(models.TextChoices):
-        PASS = "PASS"
-        FAIL = "FAIL"
+        PASS = "PASSED"
+        FAIL = "FAILED"
         ERROR = "ERROR"
         UNKNOWN = "UNKNOWN"
-        XFAIL = "XFAIL"
-        XPASS = "XPASS"
+        XFAIL = "XFAILED"
+        XPASS = "XPASSED"
         SKIPPED = "SKIPPED"
         INPROGRESS = "INPROGRESS"
 
