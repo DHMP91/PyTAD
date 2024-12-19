@@ -8,6 +8,8 @@ class TestCase(models.Model):
     name = models.CharField(max_length=100, blank=False)
     relative_path = models.CharField(max_length=300, blank=False, unique=True)
     create_date = models.DateTimeField(blank=False, auto_now_add=True)
+    code_hash =  models.CharField(max_length=300, blank=True, null=True, unique=True)
+    internal_id = models.CharField(max_length=100, blank=True, null=True, unique=True)
 
 
 class TestRun(models.Model):
@@ -34,7 +36,7 @@ class TestRun(models.Model):
         choices=Result.choices,
         default=Result.UNKNOWN
     ) # Outcome/status of test
-    start_time = models.DateTimeField(blank=False, default=datetime.datetime.now()) # Test start time. Default to now
+    start_time = models.DateTimeField(blank=False, auto_now_add=True) # Test start time. Default to now
     end_time = models.DateTimeField(null=True) # Test end time
     marks = models.CharField(max_length=30, blank=True) # Pytest marks or tags
     product_version = models.CharField(max_length=30, blank=True) # Product version tested against

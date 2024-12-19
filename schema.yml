@@ -49,6 +49,12 @@ paths:
       security:
       - tokenAuth: []
       responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestCase'
+          description: ''
         '201':
           content:
             application/json:
@@ -263,6 +269,7 @@ components:
         start_time:
           type: string
           format: date-time
+          readOnly: true
         end_time:
           type: string
           format: date-time
@@ -281,6 +288,7 @@ components:
           maxLength: 100
       required:
       - name
+      - start_time
     PaginatedTestCaseList:
       type: object
       required:
@@ -330,10 +338,22 @@ components:
     SearchTestCase:
       type: object
       properties:
+        name:
+          type: string
+          maxLength: 100
         relative_path:
           type: string
           maxLength: 300
+        code_hash:
+          type: string
+          nullable: true
+          maxLength: 300
+        internal_id:
+          type: string
+          nullable: true
+          maxLength: 100
       required:
+      - name
       - relative_path
     StatusEnum:
       enum:
@@ -371,6 +391,14 @@ components:
           type: string
           format: date-time
           readOnly: true
+        code_hash:
+          type: string
+          nullable: true
+          maxLength: 300
+        internal_id:
+          type: string
+          nullable: true
+          maxLength: 100
       required:
       - create_date
       - id
@@ -396,6 +424,7 @@ components:
         start_time:
           type: string
           format: date-time
+          readOnly: true
         end_time:
           type: string
           format: date-time
@@ -415,6 +444,7 @@ components:
       required:
       - id
       - name
+      - start_time
   securitySchemes:
     tokenAuth:
       type: apiKey

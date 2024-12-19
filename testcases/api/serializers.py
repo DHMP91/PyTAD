@@ -10,12 +10,19 @@ class TestCaseSerializer(serializers.ModelSerializer):
             'name',
             'relative_path',
             'create_date',
+            "code_hash",
+            "internal_id"
         ]
 
-
-class SearchTestCaseSerializer(serializers.Serializer):
-    relative_path = serializers.CharField(max_length=300)
-
+class SearchTestCaseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TestCase
+        fields = [
+            'name',
+            'relative_path',
+            "code_hash",
+            "internal_id"
+        ]
 
 class NewTestRunSerializer(serializers.ModelSerializer):
     class Meta:

@@ -8,8 +8,36 @@ Goal of this project is to have an overall view of test health and test traceabi
 Target Users: 
     Product Manager and or QA Managers who would like to monitor and insight of automated tests and test runs
 
-Planned features is:
-- Automatic registering of tests from pytest
+### Current Features:
+- Automatic Test Registration:
+  - Automatically registers tests without manual intervention.
+- Test runs association to Test case
+  - Compatible with parametrize test. Each input is it's own test run
+- Compatible with Pytest status (e.g xfail, xpass, skipped)
+- Test Deduplication: One or more test case with the same exact test body will be match to the same test case.
+- Test Change Resiliency: 
+  - Ensures tests can still be found after being renamed, moved or updated:
+    - Internal ID (optional but recommended): Assigns a unique ID to each test with @pytest.mark.test_id(id=<unique_ID>).
+    - Relative Path: Identifies tests based on the combination of the Python module path and test name, ensuring uniqueness. 
+    - Code Hash: If internal id and relative path cannot be relied on, match test by using hash of the test body.
+        
+        | Scenario                        | Internal ID | Relative Path | Code Hash  |
+        |---------------------------------|-------------|---------------|------------|
+        | Moved Test (Module Change)      |      x      |               |     x      |
+        | Test Rename                     |      x      |               |     x      |
+        | Test Rename + Body Change       |      x      |               |            |
+        | Moved Test + Body Change        |      x      |               |            |
+        | Rename + Moved (Module Change)  |      x      |               |     x      |
+        | Rename + Moved + Body Change    |      x      |               |            |
+        | Internal ID Change              |             |       x       |     x      |
+        | Internal ID Change + Rename     |             |               |     x      |
+        | Internal ID Change + Moved      |             |               |     x      |
+        | Internal ID Change + Body       |             |       x       |            |
+        | Duplicate Test (Same Body)      |             |               |     x      |
+
+    
+
+### Upcoming features:
 - View for active running test
 - History of test cases test runs
 - Automatic Defect association from pytest marks
@@ -21,14 +49,14 @@ Planned features is:
 
 
 
-# Create API User and Token
+#### Create API User and Token
 ```text
 python .\manage.py createsuperuser # Create superuser for api
 python .\manage.py migrate authtoken  # Need to be done only once per db creation
 python .\manage.py drf_create_token <username> # Create token for user
 ```
 
-# Cheat sheet
+#### Cheat sheet
 ```
 # DB migration update and migrate
 python .\manage.py makemigrations
