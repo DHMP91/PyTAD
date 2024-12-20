@@ -16,7 +16,7 @@ Target Users:
 - Compatible with Pytest status (e.g xfail, xpass, skipped)
 - Test Deduplication: One or more test case with the same exact test body will be match to the same test case.
 - Test Change Resiliency: 
-  - Ensures tests can still be found after being renamed, moved or updated:
+  - Ensures tests can still be found after being updated or moved:
     - Internal ID (optional but recommended): Assigns a unique ID to each test with @pytest.mark.test_id(id=<unique_ID>).
     - Relative Path: Identifies tests based on the combination of the Python module path and test name, ensuring uniqueness. 
     - Code Hash: If internal id and relative path cannot be relied on, match test by using hash of the test body.
@@ -38,7 +38,7 @@ Target Users:
     
 
 ### Upcoming features:
-- View for active running test
+- Monitor active running tests
 - History of test cases test runs
 - Automatic Defect association from pytest marks
 - Test status breakdown per product version/branch
@@ -49,7 +49,13 @@ Target Users:
 
 
 
-#### Create API User and Token
+#### URLS
+```text
+http://<server:port>/api/schema/swagger-ui
+http://<server:port>/api/schema/redoc
+```
+
+#### API User and Token
 ```text
 python .\manage.py createsuperuser # Create superuser for api
 python .\manage.py migrate authtoken  # Need to be done only once per db creation

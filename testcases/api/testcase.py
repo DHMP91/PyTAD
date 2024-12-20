@@ -18,6 +18,13 @@ class TestCasesAPI(generics.ListAPIView):
     serializer_class = TestCaseSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    @extend_schema(
+        description="List Test Cases (Support Pagination)",
+        operation_id="listTestCases"
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
 
 class NewTestCaseAPI(generics.CreateAPIView):
     authentication_classes = [TokenAuthentication]
@@ -26,6 +33,8 @@ class NewTestCaseAPI(generics.CreateAPIView):
 
 
     @extend_schema(
+        description="Create Test Cases. Has test change resiliency feature",
+        operation_id="createTestCase",
         responses = {
             200: TestCaseSerializer, # Already exists updating
             201: TestCaseSerializer, # Created test case
@@ -50,6 +59,8 @@ class NewTestCaseAPI(generics.CreateAPIView):
 class SearchTestCase(APIView):
 
     @extend_schema(
+        description="Search for test cases based on test's fields. Precedence order: internal_id, relative_path, code hash",
+        operation_id="searchTestCase",
         request=SearchTestCaseSerializer,
         responses=TestCaseSerializer
     )
@@ -101,6 +112,10 @@ class TestCaseAPI(APIView):
     serializer_class = TestCaseSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    @extend_schema(
+        description="Get test case by id",
+        operation_id="getTestCase"
+    )
     def get(self, request, pk):
         test_case = self.__get_test_case(pk)
         if not test_case:
@@ -109,12 +124,20 @@ class TestCaseAPI(APIView):
         serializer = TestCaseSerializer(test_case)
         return Response(serializer.data)
 
+    @extend_schema(
+        description="Update test case",
+        operation_id="updateTestCase"
+    )
     def put(self, request, pk):
         test_case = self.__get_test_case(pk)
         if not test_case:
             return Response(status=status.HTTP_404_NOT_FOUND)
         return TestCaseAPI.update(test_case, request.data)
 
+    @extend_schema(
+        description="Delete test case",
+        operation_id="deleteTestCase"
+    )
     def delete(self, request, pk):
         test_case = self.__get_test_case(pk)
         if not test_case:

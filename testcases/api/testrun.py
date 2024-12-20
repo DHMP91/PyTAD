@@ -12,6 +12,13 @@ class TestRunsAPI(generics.ListAPIView):
     serializer_class = TestRunSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    @extend_schema(
+        description="List Test Runs (Support Pagination)",
+        operation_id="listTestRuns"
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
     def list(self, request, *args, **kwargs):
         qs = TestRun.objects.filter(test_id = kwargs["pk"])
         page = self.paginate_queryset(qs)
@@ -28,6 +35,8 @@ class NewTestRunAPI(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     @extend_schema(
+        description="Create new Test Run",
+        operation_id="createTestRun",
         request=NewTestRunSerializer,
         responses={
             201:TestRunSerializer
@@ -46,6 +55,10 @@ class TestRunAPI(APIView):
     serializer_class = TestRunSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    @extend_schema(
+        description="Get test run by id",
+        operation_id="getTestRun"
+    )
     def get(self, request, pk):
         test_run = self.__get_test_run(pk)
         if not test_run:
@@ -54,6 +67,10 @@ class TestRunAPI(APIView):
         return Response(serializer.data)
 
 
+    @extend_schema(
+        description="Update test run by id",
+        operation_id="updateTestRun"
+    )
     def put(self, request, pk):
         test_run = self.__get_test_run(pk)
         if not test_run:
@@ -66,6 +83,10 @@ class TestRunAPI(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @extend_schema(
+        description="Delete test run by id",
+        operation_id="deleteTestRun"
+    )
     def delete(self, pk):
         test_run = self.__get_test_run(pk)
         if not test_run:
