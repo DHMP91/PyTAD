@@ -129,6 +129,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # Rest framework specific
+# https://www.django-rest-framework.org/api-guide
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
@@ -145,9 +146,10 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 20,
+    'PAGE_SIZE': 10,
 }
 
+# https://drf-spectacular.readthedocs.io/en/latest/readme.html
 SPECTACULAR_SETTINGS = {
     'TITLE': 'PYTAD API',
     'DESCRIPTION': 'API for test reporting',

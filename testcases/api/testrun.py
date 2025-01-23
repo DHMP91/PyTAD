@@ -87,7 +87,7 @@ class TestRunAPI(APIView):
         description="Delete test run by id",
         operation_id="deleteTestRun"
     )
-    def delete(self, pk):
+    def delete(self, request, pk):
         test_run = self.__get_test_run(pk)
         if not test_run:
             return Response(status=status.HTTP_404_NOT_FOUND)
