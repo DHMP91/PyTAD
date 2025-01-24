@@ -4,7 +4,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from testcases.models import TestRun
+from testcases.models import TestRun, TestBody
 from testcases.api.serializers import TestRunSerializer, NewTestRunSerializer
 
 
@@ -20,7 +20,7 @@ class TestRunsAPI(generics.ListAPIView):
         return super().get(request, *args, **kwargs)
 
     def list(self, request, *args, **kwargs):
-        qs = TestRun.objects.filter(test_id = kwargs["pk"])
+        qs = TestRun.objects.filter(test_id = kwargs["pk"]).order_by("-id")
         page = self.paginate_queryset(qs)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -44,6 +44,8 @@ class NewTestRunAPI(APIView):
     )
     def post(self, request, pk):
         request.data['test_id'] = pk
+        test_body = TestBody.objects.get(code_hash=request.data['code_hash'])
+        request.data['test_body_id'] = test_body.pk
         serializer = TestRunSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()

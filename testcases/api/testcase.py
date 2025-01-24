@@ -8,8 +8,8 @@ from rest_framework.views import APIView
 from rest_framework import status, permissions, generics
 from typing import Type, Union
 
-from testcases.models import TestCase
-from testcases.api.serializers import TestCaseSerializer, SearchTestCaseSerializer
+from testcases.models import TestCase, TestBody
+from testcases.api.serializers import TestCaseSerializer, SearchTestCaseSerializer, NewTestCaseSerializer
 
 
 class TestCasesAPI(generics.ListAPIView):
@@ -28,9 +28,8 @@ class TestCasesAPI(generics.ListAPIView):
 
 class NewTestCaseAPI(generics.CreateAPIView):
     authentication_classes = [TokenAuthentication]
-    serializer_class = TestCaseSerializer
+    serializer_class = NewTestCaseSerializer
     permission_classes = [permissions.IsAuthenticated]
-
 
     @extend_schema(
         description="Create Test Cases. Has test change resiliency feature",
@@ -41,19 +40,44 @@ class NewTestCaseAPI(generics.CreateAPIView):
         }
     )
     def post(self, request, *args, **kwargs):
-        serializer = TestCaseSerializer(data=request.data)
+        serializer = NewTestCaseSerializer(data=request.data)
         if serializer.is_valid():
-            test_case = SearchTestCase.search(TestCase, serializer)
+            test_case = SearchTestCase.search(serializer)
+            data = dict(request.data)
             if test_case:
-                return TestCaseAPI.update(test_case, request.data)
+                return self.__update_test(test_case, data)
             else:
-                return super().post(request, *args, **kwargs)
+                code = request.data['code']
+                code_hash = request.data['code_hash']
+                del data['code']
+                del data['code_hash']
+                return self.__create_new_test(data, code, code_hash)
         elif not serializer.is_valid() and "code='unique'" in str(serializer.errors) and "already exists" in str(serializer.errors):
-            test_case = SearchTestCase.search(TestCase, serializer)
-            if test_case:
-                return TestCaseAPI.update(test_case, request.data)
+            test_case = SearchTestCase.search(serializer)
+            data = dict(request.data)
+            return self.__update_test(test_case, data)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def __create_new_test(self, data: dict,  code: str, code_hash: str):
+        new_serializer = TestCaseSerializer(data=data)
+        if new_serializer.is_valid():
+            new_serializer.save()
+            headers = self.get_success_headers(new_serializer)
+            response = Response(new_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            test_case = TestCase.objects.get(pk=new_serializer.data['id'])
+            TestBody(test_case=test_case, code=code, code_hash=code_hash).save()
+            return response
+        else:
+            return Response(new_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @staticmethod
+    def __update_test(test_case, data):
+        try:
+            TestBody.objects.get(code_hash=data['code_hash'])
+        except TestBody.DoesNotExist:
+            TestBody(test_case=test_case, code=data['code'], code_hash=data['code_hash']).save()
+        return TestCaseAPI.update(test_case, data)
 
 
 class SearchTestCase(APIView):
@@ -77,7 +101,7 @@ class SearchTestCase(APIView):
             return Response(request_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @staticmethod
-    def search(model: Type[TestCase], search_request: Union[SearchTestCaseSerializer, TestCaseSerializer]):
+    def search(search_request: Union[SearchTestCaseSerializer, NewTestCaseSerializer]) -> TestCase:
         """
          Search matching test case order: internal_id, relative_path, hash
 
@@ -100,9 +124,13 @@ class SearchTestCase(APIView):
         for field, value in search_fields:
             if value:
                 try:
-                    test_case = model.objects.get(**{field: value})
+                    if field == "code_hash":
+                        test_body: TestBody = TestBody.objects.get(**{field: value})
+                        test_case: TestCase = TestCase.objects.get(pk=test_body.test_case_id)
+                    else:
+                        test_case: TestCase = TestCase.objects.get(**{field: value})
                     break
-                except model.DoesNotExist:
+                except (TestCase.DoesNotExist, TestBody.DoesNotExist):
                     continue
         return test_case
 

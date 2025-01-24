@@ -6,7 +6,8 @@ info:
 paths:
   /health/api:
     get:
-      operationId: health_api_retrieve
+      operationId: getHealth
+      description: Endpoint to test out service state
       tags:
       - health
       security:
@@ -16,7 +17,8 @@ paths:
           description: No response body
   /testcases/api/list:
     get:
-      operationId: testcases_api_list_list
+      operationId: listTestCases
+      description: List Test Cases (Support Pagination)
       parameters:
       - name: page
         required: false
@@ -37,14 +39,15 @@ paths:
           description: ''
   /testcases/api/testcase:
     post:
-      operationId: testcases_api_testcase_create
+      operationId: createTestCase
+      description: Create Test Cases. Has test change resiliency feature
       tags:
       - testcases
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TestCase'
+              $ref: '#/components/schemas/NewTestCase'
         required: true
       security:
       - tokenAuth: []
@@ -63,7 +66,8 @@ paths:
           description: ''
   /testcases/api/testcase/{id}:
     get:
-      operationId: testcases_api_testcase_retrieve
+      operationId: getTestCase
+      description: Get test case by id
       parameters:
       - in: path
         name: id
@@ -82,7 +86,8 @@ paths:
                 $ref: '#/components/schemas/TestCase'
           description: ''
     put:
-      operationId: testcases_api_testcase_update
+      operationId: updateTestCase
+      description: Update test case
       parameters:
       - in: path
         name: id
@@ -107,7 +112,8 @@ paths:
                 $ref: '#/components/schemas/TestCase'
           description: ''
     delete:
-      operationId: testcases_api_testcase_destroy
+      operationId: deleteTestCase
+      description: Delete test case
       parameters:
       - in: path
         name: id
@@ -123,7 +129,8 @@ paths:
           description: No response body
   /testcases/api/testcase/{id}/testrun:
     post:
-      operationId: testcases_api_testcase_testrun_create
+      operationId: createTestRun
+      description: Create new Test Run
       parameters:
       - in: path
         name: id
@@ -149,7 +156,8 @@ paths:
           description: ''
   /testcases/api/testcase/{id}/testruns:
     get:
-      operationId: testcases_api_testcase_testruns_list
+      operationId: listTestRuns
+      description: List Test Runs (Support Pagination)
       parameters:
       - in: path
         name: id
@@ -175,7 +183,9 @@ paths:
           description: ''
   /testcases/api/testcase/search:
     post:
-      operationId: testcases_api_testcase_search_create
+      operationId: searchTestCase
+      description: 'Search for test cases based on test''s fields. Precedence order:
+        internal_id, relative_path, code hash'
       tags:
       - testcases
       requestBody:
@@ -195,7 +205,8 @@ paths:
           description: ''
   /testcases/api/testrun/{id}:
     get:
-      operationId: testcases_api_testrun_retrieve
+      operationId: getTestRun
+      description: Get test run by id
       parameters:
       - in: path
         name: id
@@ -214,7 +225,8 @@ paths:
                 $ref: '#/components/schemas/TestRun'
           description: ''
     put:
-      operationId: testcases_api_testrun_update
+      operationId: updateTestRun
+      description: Update test run by id
       parameters:
       - in: path
         name: id
@@ -239,7 +251,8 @@ paths:
                 $ref: '#/components/schemas/TestRun'
           description: ''
     delete:
-      operationId: testcases_api_testrun_destroy
+      operationId: deleteTestRun
+      description: Delete test run by id
       parameters:
       - in: path
         name: id
@@ -255,6 +268,37 @@ paths:
           description: No response body
 components:
   schemas:
+    NewTestCase:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        relative_path:
+          type: string
+          maxLength: 300
+        create_date:
+          type: string
+          format: date-time
+          readOnly: true
+        code_hash:
+          type: string
+        code:
+          type: string
+        internal_id:
+          type: string
+          nullable: true
+          maxLength: 100
+      required:
+      - code
+      - code_hash
+      - create_date
+      - id
+      - name
+      - relative_path
     NewTestRun:
       type: object
       properties:
@@ -286,7 +330,10 @@ components:
         defects:
           type: string
           maxLength: 100
+        code_hash:
+          type: string
       required:
+      - code_hash
       - name
       - start_time
     PaginatedTestCaseList:
@@ -346,13 +393,13 @@ components:
           maxLength: 300
         code_hash:
           type: string
-          nullable: true
-          maxLength: 300
+          readOnly: true
         internal_id:
           type: string
           nullable: true
           maxLength: 100
       required:
+      - code_hash
       - name
       - relative_path
     StatusEnum:
@@ -391,10 +438,6 @@ components:
           type: string
           format: date-time
           readOnly: true
-        code_hash:
-          type: string
-          nullable: true
-          maxLength: 300
         internal_id:
           type: string
           nullable: true
@@ -418,7 +461,6 @@ components:
           maxLength: 30
         test_id:
           type: integer
-          nullable: true
         status:
           $ref: '#/components/schemas/StatusEnum'
         start_time:
@@ -441,10 +483,14 @@ components:
         defects:
           type: string
           maxLength: 100
+        test_body_id:
+          type: integer
       required:
       - id
       - name
       - start_time
+      - test_body_id
+      - test_id
   securitySchemes:
     tokenAuth:
       type: apiKey

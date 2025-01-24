@@ -34,6 +34,11 @@ Target Users:
         | Internal ID Change + Moved      |             |               |     x      |
         | Internal ID Change + Body       |             |       x       |            |
         | Duplicate Test (Same Body)      |             |               |     x      |
+    
+    - Test Change Tracking:
+      - Test code changes are tracked and linked to the same registered test if the name and path or internal ID match. 
+      - Scenario: A test's code may be updated for a new product version while still running with older code to verify previous versions (e.g., after a hot patch or bug fix). This requires tracking both test runs under the same test but with different code versions.
+
 
     
 

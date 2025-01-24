@@ -8,9 +8,14 @@ class TestCase(models.Model):
     name = models.CharField(max_length=100, blank=False)
     relative_path = models.CharField(max_length=300, blank=False, unique=True)
     create_date = models.DateTimeField(blank=False, auto_now_add=True)
-    code_hash =  models.CharField(max_length=300, blank=True, null=True, unique=True)
     internal_id = models.CharField(max_length=100, blank=True, null=True, unique=True)
+    code = None
+    code_hash = None
 
+class TestBody(models.Model):
+    code = models.TextField(max_length=1000, blank=False)
+    code_hash = models.CharField(max_length=300, blank=False, unique=True)
+    test_case = models.ForeignKey(TestCase, on_delete=models.CASCADE)
 
 class TestRun(models.Model):
     class Result(models.TextChoices):
@@ -30,7 +35,7 @@ class TestRun(models.Model):
 
     name = models.CharField(max_length=100)  # Test suite id
     suite_id = models.CharField(max_length=30, blank=True) # Test suite id
-    test_id = models.ForeignKey(TestCase, models.CASCADE, related_name="test_runs", null=True) # Test Case ID. If null, untracked test
+    test_id = models.ForeignKey(TestCase, models.CASCADE, related_name="test_runs")
     status = models.CharField(
         max_length=30,
         choices=Result.choices,
@@ -42,5 +47,6 @@ class TestRun(models.Model):
     product_version = models.CharField(max_length=30, blank=True) # Product version tested against
     environment = models.CharField(max_length=200, blank=True) # Environment detail of test run
     defects = models.CharField(max_length=100, blank=True) # Related/Known defects related to test
-
+    test_body_id = models.ForeignKey(TestBody, on_delete=models.CASCADE)
+    code_hash = None
 
