@@ -14,7 +14,7 @@ urlpatterns = [
     path("api/testcase", NewTestCaseAPI.as_view()), # Post new test case
     path("api/testcase/search", SearchTestCase.as_view()),
     path("api/testcase/<int:pk>", TestCaseAPI.as_view()), # GET, PUT, DELETE test case
-    path("api/testcase/<int:pk>/testbody", TestBodyAPI.as_view()),  # all test cases
+    path("api/testcase/<int:pk>/testbody", TestBodyAPI.as_view()),  # list testcase codes/bodies
 
     #Test Runs API
     path("api/testcase/<int:pk>/testruns", TestRunsAPI.as_view()),  # all test cases
