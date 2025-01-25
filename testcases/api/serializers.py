@@ -1,7 +1,7 @@
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
-from testcases.models import TestRun, TestCase
+from testcases.models import TestRun, TestCase, TestBody
 
 
 class TestCaseSerializer(serializers.ModelSerializer):
@@ -80,4 +80,15 @@ class TestRunSerializer(serializers.ModelSerializer):
             'environment',
             'defects',
             'test_body_id'
+        ]
+
+
+class TestBodySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TestBody
+        fields = [
+            'id',
+            'code',
+            'code_hash',
+            'create_date',
         ]

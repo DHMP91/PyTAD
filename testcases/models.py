@@ -15,6 +15,7 @@ class TestCase(models.Model):
 class TestBody(models.Model):
     code = models.TextField(max_length=1000, blank=False)
     code_hash = models.CharField(max_length=300, blank=False, unique=True)
+    create_date = models.DateTimeField(blank=False, auto_now_add=True)
     test_case = models.ForeignKey(TestCase, on_delete=models.CASCADE)
 
 class TestRun(models.Model):
